@@ -4,13 +4,14 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Auth; 
 
 class HttpService
 {
     protected $client;
-    protected $allowedDomains = ['internal.finance','newsapi.org'];
+    protected $allowedDomains = ['internal.finance', 'newsapi.org'];
     protected $allowedProtocols = ['http', 'https'];
-    protected $refererHeader; // Intestazione Referer
+    protected $refererHeader;
 
     public function __construct()
     {
@@ -32,7 +33,13 @@ class HttpService
             return 'Domain not allowed';
         }
 
-        // Aggiungi l'intestazione Referer per le richieste al server locale
+        // solo gli admin possono accedere a internal.finance
+        if ($parsedUrl['host'] === 'internal.finance') {
+            if (!Auth::check() || !Auth::user()->is_admin) {
+                return 'Access denied: only admins can access internal financial data';
+            }
+        }
+
         $options['headers'] = ['Referer' => $this->refererHeader];
 
         try {
