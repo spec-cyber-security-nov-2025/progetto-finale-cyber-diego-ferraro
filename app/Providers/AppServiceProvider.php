@@ -7,6 +7,9 @@ use App\Models\Tag;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Http\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,11 +21,20 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
+    
     /**
      * Bootstrap any application services.
      */
     public function boot(): void
     {
+
+
+    RateLimiter::for('search', function (Request $request) {
+        \Log::info('RATE LIMITER ATTIVATO - IP: ' . $request->ip());
+        return Limit::perMinute(5)->by($request->ip());
+    });
+
+
         if(Schema::hasTable('categories')){
             $categories = Category::all();
             View::share(['categories' => $categories]);
