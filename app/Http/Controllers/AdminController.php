@@ -58,6 +58,8 @@ class AdminController extends Controller
         $user->is_admin = true;
         $user->save();
 
+        Log::warning("RUOLO CAMBIATO: Utente {$user->email} (ID: {$user->id}) promosso ad ADMIN da " . Auth::user()->email . " (IP: " . request()->ip() . ")");
+
         return redirect(route('admin.dashboard'))->with('message', "$user->name is now administrator");
     }
 
@@ -65,12 +67,16 @@ class AdminController extends Controller
         $user->is_revisor = true;
         $user->save();
 
+        Log::warning("RUOLO CAMBIATO: Utente {$user->email} (ID: {$user->id}) promosso a REVISOR da " . Auth::user()->email . " (IP: " . request()->ip() . ")");
+
         return redirect(route('admin.dashboard'))->with('message', "$user->name is now revisor");
     }
 
     public function setWriter(User $user){
         $user->is_writer = true;
         $user->save();
+
+        Log::warning("RUOLO CAMBIATO: Utente {$user->email} (ID: {$user->id}) promosso a WRITER da " . Auth::user()->email . " (IP: " . request()->ip() . ")");
 
         return redirect(route('admin.dashboard'))->with('message', "$user->name is now writer");
     }

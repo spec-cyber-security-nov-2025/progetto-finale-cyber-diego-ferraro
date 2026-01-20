@@ -62,6 +62,8 @@ class ArticleController extends Controller implements HasMiddleware
             'user_id' => Auth::user()->id,
             'slug' => Str::slug($request->title),
         ]);
+
+        Log::info("ARTICOLO CREATO: ID {$article->id}, Titolo '{$article->title}', Autore: {$article->user->email} (ID: {$article->user_id}), IP: {$request->ip()}");
         
         $tags = explode(',', $request->tags);
 
@@ -120,6 +122,8 @@ class ArticleController extends Controller implements HasMiddleware
             'slug' => Str::slug($request->title),
         ]);
 
+        Log::info("ARTICOLO MODIFICATO: ID {$article->id}, Titolo '{$article->title}', Autore: {$article->user->email} (ID: {$article->user_id}), IP: {$request->ip()}");
+
         if($request->image){
             Storage::delete($article->image);
             $article->update([
@@ -151,6 +155,8 @@ class ArticleController extends Controller implements HasMiddleware
      */
     public function destroy(Article $article)
     {
+        Log::info("ARTICOLO ELIMINATO: ID {$article->id}, Titolo '{$article->title}', Autore: {$article->user->email} (ID: {$article->user_id}), IP: {$_SERVER['REMOTE_ADDR']}");
+
         foreach ($article->tags as $tag) {
             $article->tags()->detach($tag);
         }

@@ -9,6 +9,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class PublicController extends Controller implements HasMiddleware
 {
@@ -31,7 +32,9 @@ class PublicController extends Controller implements HasMiddleware
     }
 
     public function careersSubmit(Request $request)
+
     {
+
         $request->validate([
             'role' => 'required',
             'email' => 'required|email',
@@ -59,6 +62,10 @@ class PublicController extends Controller implements HasMiddleware
         }
 
         $user->update();
-        return redirect(route('homepage'))->with('message', 'Mail inviata con successo!');
+
+       Log::info("RICHIESTA RUOLO: Utente {$user->email} (ID: {$user->id}) ha richiesto il ruolo '{$role}' da IP: {$request->ip()}");
+
+       return redirect(route('homepage'))->with('message', 'Mail inviata con successo!');
+
     }
 }
